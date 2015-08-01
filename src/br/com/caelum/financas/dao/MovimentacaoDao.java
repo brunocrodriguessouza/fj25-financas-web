@@ -9,7 +9,10 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import br.com.caelum.financas.exception.ValorInvalidoException;
+<<<<<<< HEAD
 import br.com.caelum.financas.modelo.Conta;
+=======
+>>>>>>> 0460c9003afb7042bd359e3cc6bb510adf9111ab
 import br.com.caelum.financas.modelo.Movimentacao;
 
 @Stateless
@@ -30,7 +33,11 @@ public class MovimentacaoDao {
 		this.manager.persist(movimentacao);
 
 		if (movimentacao.getValor().compareTo(BigDecimal.ZERO) < 0) {
+<<<<<<< HEAD
 			// throw new RuntimeException("Movimentacao negativa");
+=======
+//			throw new RuntimeException("Movimentacao negativa");
+>>>>>>> 0460c9003afb7042bd359e3cc6bb510adf9111ab
 			throw new ValorInvalidoException("Movimentacao negativa");
 		}
 	}
