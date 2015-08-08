@@ -9,6 +9,7 @@ import br.com.caelum.financas.modelo.Movimentacao;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.TypedQuery;
 
 @Named
 @RequestScoped
@@ -16,7 +17,7 @@ public class MovimentacoesDaContaBean {
 
 	@Inject
 	private MovimentacaoDao dao;
-
+	
 	private List<Movimentacao> movimentacoes;
 	private Conta conta = new Conta();
 

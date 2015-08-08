@@ -1,9 +1,14 @@
 package br.com.caelum.financas.mb;
 
+import java.util.List;
 
+import br.com.caelum.financas.dao.MovimentacaoDao;
 import br.com.caelum.financas.modelo.Conta;
 import br.com.caelum.financas.modelo.TipoMovimentacao;
+import br.com.caelum.financas.modelo.ValorPorMesEAno;
+
 import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.inject.Named;
 
 @Named
@@ -13,9 +18,21 @@ public class MesesComMovimentacaoBean {
 	private Conta conta = new Conta();
 
 	private TipoMovimentacao tipoMovimentacao;
-	
+
+	@Inject
+	private MovimentacaoDao dao;
+
+	private List<ValorPorMesEAno> valoresPorMesEAno;
+
+	public List<ValorPorMesEAno> getValoresPorMesEAno() {
+		return valoresPorMesEAno;
+	}
+
 	public void lista() {
-		System.out.println("Listando as contas pelos valores movimentados no mes");
+		System.out
+				.println("Listando as contas pelos valores movimentados no mes");
+		this.valoresPorMesEAno = dao.listaMesesComMovimetacoes(conta,
+				tipoMovimentacao);
 
 	}
 

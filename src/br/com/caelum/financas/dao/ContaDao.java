@@ -11,9 +11,11 @@ import javax.ejb.TransactionManagement;
 import javax.ejb.TransactionManagementType;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.transaction.UserTransaction;
 
 import br.com.caelum.financas.modelo.Conta;
+import br.com.caelum.financas.modelo.Movimentacao;
 
 @TransactionManagement(TransactionManagementType.BEAN)
 @Stateless
@@ -46,6 +48,8 @@ public class ContaDao {
 			throw new EJBException(e);
 		}
 	}
+	
+
 
 	public Conta busca(Integer id) {
 		return this.manager.find(Conta.class, id);

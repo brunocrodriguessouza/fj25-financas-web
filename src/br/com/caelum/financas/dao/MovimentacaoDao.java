@@ -13,18 +13,45 @@ import br.com.caelum.financas.exception.ValorInvalidoException;
 import br.com.caelum.financas.modelo.Conta;
 import br.com.caelum.financas.modelo.Movimentacao;
 import br.com.caelum.financas.modelo.TipoMovimentacao;
+import br.com.caelum.financas.modelo.ValorPorMesEAno;
 
 @Stateless
 public class MovimentacaoDao {
 
 	@PersistenceContext
 	EntityManager manager;
-	
-	public BigDecimal calculaTotalMovimentado(Conta conta, TipoMovimentacao tipo){
+
+	public List<ValorPorMesEAno> listaMesesComMovimetacoes(Conta conta,
+			TipoMovimentacao tipo) {
+		String jpql = "select new br.com.caelum.financas.modelo.ValorPorMesEAno"
+				+ " (month(m.data), year(m.data), sum(m.valor))"
+				+ " from Movimentacao m "
+				+ " where m.conta = :conta and m.tipoMovimentacao=:tipo"
+				+ " group by year(m.data) || month(m.data)"
+				+ " order by sum(m.valor) desc";
+
+		Query query = this.manager.createQuery(jpql);
+		query.setParameter("conta", conta);
+		query.setParameter("tipo", tipo);
+		return query.getResultList();
+	}
+
+	public List<Movimentacao> buscaTodasMovimentacoesDaConta(String titular) {
+		String jpql = "select m from Movimentacao m "
+				+ "where m.conta.titular like :titular";
+		TypedQuery<Movimentacao> query = this.manager.createQuery(jpql,
+				Movimentacao.class);
+		query.setParameter("titular", "%" + titular + "%");
+
+		return query.getResultList();
+	}
+
+	public BigDecimal calculaTotalMovimentado(Conta conta, TipoMovimentacao tipo) {
 		String jpql = "select sum(m.valor) from Movimentacao m "
 				+ "where m.conta=:conta and m.tipoMovimentacao=:tipo";
-		
-		TypedQuery<BigDecimal> query = this.manager.createQuery(jpql, BigDecimal.class);
+
+		TypedQuery<BigDecimal> query = this.manager.createQuery(jpql,
+				BigDecimal.class);
 		query.setParameter("conta", conta);
 		query.setParameter("tipo", tipo);
 		return query.getSingleResult();
@@ -37,14 +64,15 @@ public class MovimentacaoDao {
 		query.setParameter("conta", conta);
 		return query.getResultList();
 	}
-	
-	public List<Movimentacao> listaPorValorETipo(BigDecimal valor, TipoMovimentacao tipo){
-		String jpql = "select m from Movimentacao m " +
-					"where m.valor = :valor and m.tipoMovimentacao = :tipo";
-		
+
+	public List<Movimentacao> listaPorValorETipo(BigDecimal valor,
+			TipoMovimentacao tipo) {
+		String jpql = "select m from Movimentacao m "
+				+ "where m.valor = :valor and m.tipoMovimentacao = :tipo";
+
 		Query query = this.manager.createQuery(jpql);
 		query.setParameter("valor", valor);
-		query.setParameter("tipo", tipo);			
+		query.setParameter("tipo", tipo);
 		return query.getResultList();
 	}
 
@@ -53,7 +81,7 @@ public class MovimentacaoDao {
 
 		if (movimentacao.getValor().compareTo(BigDecimal.ZERO) < 0) {
 
-//			throw new RuntimeException("Movimentacao negativa");
+			// throw new RuntimeException("Movimentacao negativa");
 
 			throw new ValorInvalidoException("Movimentacao negativa");
 		}
