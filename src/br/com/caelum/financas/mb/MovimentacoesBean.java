@@ -9,8 +9,10 @@ import javax.faces.view.ViewScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import br.com.caelum.financas.dao.CategoriaDao;
 import br.com.caelum.financas.dao.ContaDao;
 import br.com.caelum.financas.dao.MovimentacaoDao;
+import br.com.caelum.financas.modelo.Categoria;
 import br.com.caelum.financas.modelo.Conta;
 import br.com.caelum.financas.modelo.Movimentacao;
 import br.com.caelum.financas.modelo.TipoMovimentacao;
@@ -25,11 +27,31 @@ public class MovimentacoesBean implements Serializable {
 	private MovimentacaoDao movimentacaoDao;
 	@Inject
 	private ContaDao contaDao;
+	@Inject
+	private CategoriaDao categoriaDao;
 
 	private List<Movimentacao> movimentacoes;
-	private Movimentacao movimentacao = new Movimentacao();
+	private List<Categoria> categorias;
+
 	private Integer contaId;
 	private Integer categoriaId;
+
+	private Movimentacao movimentacao = new Movimentacao();
+
+	public List<Categoria> getCategorias() {
+		if (this.categorias == null) {
+			System.out.println("Listando as categorias");
+			this.categorias = this.categoriaDao.lista();
+		}
+		return this.categorias;
+	}
+
+	public void adicionaCategoria() {
+		if (this.categoriaId != null && this.categoriaId > 0) {
+			Categoria categoria = categoriaDao.procura(this.categoriaId);
+			this.movimentacao.getCategorias().add(categoria);
+		}
+	}
 
 	public void grava() {
 		System.out.println("Fazendo a gravacao da movimentacao");
@@ -37,7 +59,7 @@ public class MovimentacoesBean implements Serializable {
 		movimentacao.setConta(contaRelacionada);
 		movimentacaoDao.adiciona(movimentacao);
 		this.movimentacoes = movimentacaoDao.lista();
-		
+
 		limpaFormularioDoJSF();
 	}
 
